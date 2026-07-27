@@ -1,25 +1,54 @@
+import { resolve } from "node:path";
+import { readFileSync } from "node:fs";
 import type { Context, MiddlewareHandler } from "hono";
 import { renderToReadableStream } from "hono/jsx/streaming";
 
-function template(data: object, ssrString?: string | null) {
-    let assetTag;
+const isProd = import.meta.env.NODE_ENV === "production";
 
-    if (import.meta.env.NODE_ENV === "production") {
-        // todo: figure out how to get the hash
-        assetTag =
-            `<script type="module" src="/static/client-B2footOV.js" defer></script>`;
-    } else {
-        assetTag = `
+const clientAssetsHtml = resolveAssetHtml(isProd, isProd ? readManifest() : {});
+
+function resolveAssetHtml(isProduction: boolean, manifest: object) {
+    if (!isProduction) {
+        return `
 			 <script type="module" src="http://localhost:5173/@vite/client"></script>
             <script type="module" src="http://localhost:5173/src/client.ts"></script>`;
     }
 
+    //In production, dynamically inject the compiled client assets
+    const entry = manifest["src/client.ts"];
+    if (!entry) {
+        console.warn('Could not find "src/client.ts" in Vite manifest.');
+    } else {
+        let assetTag =
+            `<script type="module" src="${entry.file}" defer></script>`;
+        // If your entry point imports any CSS files, include them too
+        if (entry.css && Array.isArray(entry.css)) {
+            for (const cssFile of entry.css) {
+                assetTag += `<link rel="stylesheet" href="${cssFile}">\n`;
+            }
+        }
+        return assetTag;
+    }
+}
+
+function readManifest(path = ".vite/manifest.json") {
+    try {
+        const manifestPath = resolve(import.meta.dirname, path);
+
+        return JSON.parse(readFileSync(manifestPath, "utf-8"));
+    } catch (e) {
+
+        throw new Error('Vite manifest not found. Did you run "vite build"?', e,);
+    }
+}
+
+function template(data: object, ssrString?: string | null) {
     return `<!DOCTYPE html>
         <html lang="en">
           <head>
             <meta charset="UTF-8" />
             <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-            ${assetTag}
+            ${clientAssetsHtml}
           </head>
           <body id="app">            
             <script data-page="app" type="application/json">
