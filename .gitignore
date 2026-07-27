@@ -1,0 +1,5 @@
+.devbox
+.idea
+
+.env
+node_modules/
