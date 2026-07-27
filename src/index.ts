@@ -7,9 +7,11 @@ const app = new Hono();
 
 app.use(setRenderer());
 
-app.get('/', async(ctx)=>{
-
-  return ctx.html("<strong> Hello there. </strong>")
+app.get("/", async (ctx) => {
+    return ctx.render("home", { name: "John" });
+});
+app.get("/about", async (ctx) => {
+    return ctx.render("about");
 });
 
 export default app;
