@@ -1,7 +1,12 @@
 {
-  
   "scripts": {
-    "dev": "bun run --hot src/index.ts"
+    "dev": "bun run --parallel dev:server dev:web",
+    "dev:server": "bun run --hot src/index.ts",
+    "dev:web": "vite",
+    "build": "bun run --sequential  build:web build:server",
+    "build:web": "vite build",
+    "build:server": "bun build --outdir dist/ src/index.ts",
+    "preview": "NODE_ENV=production bun run -cwd dist ./index.js"
   },
   "dependencies": {},
   "devDependencies": {
