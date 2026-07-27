@@ -4,6 +4,7 @@ import { setRenderer } from "./middleware/renderer.ts";
 
 const app = new Hono();
 
+app.use("/static/*", serveStatic({ root: import.meta.dir }));
 
 app.use(setRenderer());
 
