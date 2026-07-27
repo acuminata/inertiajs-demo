@@ -1,6 +1,8 @@
 import { createInertiaApp } from "@inertiajs/svelte";
 import { mount } from "svelte";
 
+import './lib/assets/index.css';
+
 await createInertiaApp({
     resolve: (name) => {
         const pages = import.meta.glob("./pages/**/*.svelte", { eager: true });
