@@ -1,7 +1,7 @@
 <script lang="ts">
-    import Header from '../lib/components/header.svelte';
+import Header from "../lib/components/header.svelte";
 
-    let { message } = $props();
+let { name } = $props();
 </script>
 
 <svelte:head>
@@ -11,5 +11,5 @@
 <main class="p-8">
     <Header/>
     <h1 class="text-2xl font-bold">Welcome to Inertia!</h1>
-    <p class="text-gray-600">{message}</p>
+    <p class="text-gray-600">Hello {name}</p>
 </main>

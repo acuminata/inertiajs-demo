@@ -9,10 +9,10 @@ app.use("/static/*", serveStatic({ root: import.meta.dir }));
 app.use(setRenderer());
 
 app.get("/", async (ctx) => {
-    return ctx.render("home", { name: "John" });
+	return ctx.render("home", { name: "John" });
 });
 app.get("/about", async (ctx) => {
-    return ctx.render("about");
+	return ctx.render("about");
 });
 
 export default app;
