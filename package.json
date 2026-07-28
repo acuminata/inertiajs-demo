@@ -1,10 +1,12 @@
 {
 	"scripts": {
-		"dev": "vite",
+		"dev": "bun run --parallel dev:web gen:types",
+		"dev:web": "vite",
 		"build": "bun run --sequential build:web build:server",
 		"build:web": "vite build",
 		"build:server": "bun build --outdir=dist/ --target=bun src/index.ts",
-		"preview": "NODE_ENV=production bun run -cwd dist ./index.js"
+		"preview": "NODE_ENV=production bun run -cwd dist ./index.js",
+		"gen:types": "bun run ./tools/gen-inertia-types.ts --in ./src/pages --out ./src/inertia.d.ts"
 	},
 	"dependencies": {},
 	"devDependencies": {
