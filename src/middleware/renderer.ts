@@ -9,9 +9,7 @@ const clientAssetsHtml = resolveAssetHtml(isProd, isProd ? readManifest() : {});
 
 function resolveAssetHtml(isProduction: boolean, manifest: object) {
     if (!isProduction) {
-        return `
-			 <script type="module" src="http://localhost:5173/@vite/client"></script>
-            <script type="module" src="http://localhost:5173/src/client.ts"></script>`;
+        return `<script type="module" src="/src/client.ts"></script>`;
     }
 
     //In production, dynamically inject the compiled client assets
