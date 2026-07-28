@@ -1,13 +1,18 @@
 import { resolve } from "node:path";
 import { readFileSync } from "node:fs";
-import { renderToReadableStream } from "hono/jsx/streaming";
 import type { Context, MiddlewareHandler } from "hono";
+import type { Manifest } from "vite";
+
+type Renderer = (
+	component: InertiaPage,
+	props?: Record<string, unknown>,
+) => Response;
 
 const isProd = import.meta.env.NODE_ENV === "production";
 
 const clientAssetsHtml = resolveAssetHtml(isProd, isProd ? readManifest() : {});
 
-function resolveAssetHtml(isProduction: boolean, manifest: object) {
+function resolveAssetHtml(isProduction: boolean, manifest: Manifest) {
 	if (!isProduction) {
 		return `<script type="module" src="/src/client.ts"></script>`;
 	}
@@ -28,13 +33,14 @@ function resolveAssetHtml(isProduction: boolean, manifest: object) {
 	}
 }
 
-function readManifest(path = ".vite/manifest.json") {
+function readManifest(path = ".vite/manifest.json"): Manifest {
 	try {
 		const manifestPath = resolve(import.meta.dirname, path);
 
 		return JSON.parse(readFileSync(manifestPath, "utf-8"));
 	} catch (e) {
-		throw new Error('Vite manifest not found. Did you run "vite build"?', e);
+		console.log('Vite manifest not found. Did you run "vite build"?', e);
+		throw new Error('Vite manifest not found. Did you run "vite build"?');
 	}
 }
 
@@ -56,7 +62,7 @@ function template(data: object, ssrString?: string | null) {
      `;
 }
 
-function create(ctx: Context) {
+function create(ctx: Context): Renderer {
 	return (component, props) => {
 		const localVersion = "1.0.0"; //optional asset version for cache busting
 
@@ -70,12 +76,8 @@ function create(ctx: Context) {
 		const isInertiaRequest = ctx.req.header("X-Inertia") === "true";
 
 		if (!isInertiaRequest) {
-			ctx.header("Transfer-Encoding", "chunked");
-			ctx.header("Content-Type", "text/html; charset=UTF-8");
-			ctx.header("Content-Encoding", "Identity");
-
 			const content = template(inertiaObject);
-			return ctx.body(renderToReadableStream(content));
+			return ctx.html(content);
 		}
 
 		if (

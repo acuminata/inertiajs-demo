@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { serveStatic } from "hono/bun";
-import { setRenderer } from "./middleware/renderer.ts";
+import { setRenderer } from "./middleware/renderer";
 
 const app = new Hono();
 

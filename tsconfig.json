@@ -1,0 +1,10 @@
+{
+	"compilerOptions": {
+		"module": "Preserve",
+		"target": "ESNext",
+		"moduleResolution": "bundler",
+		"forceConsistentCasingInFileNames": true,
+		"strict": true,
+		"types": ["bun", "vite/client"]
+	}
+}

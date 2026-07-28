@@ -1,4 +1,4 @@
-<script lang="ts">
+<script>
 import Header from "../lib/components/header.svelte";
 
 let { name } = $props();
