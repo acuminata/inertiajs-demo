@@ -1,11 +1,11 @@
-import { createInertiaApp } from "@inertiajs/svelte";
+import { createInertiaApp, type ResolvedComponent } from "@inertiajs/svelte";
 import { mount } from "svelte";
 
 import "./lib/assets/index.css";
 
 await createInertiaApp({
 	resolve: (name) => {
-		const pages = import.meta.glob("./pages/**/*.svelte", { eager: true });
+		const pages: Record<string, ResolvedComponent> = import.meta.glob("./pages/**/*.svelte", { eager: true });
 		const page = pages[`./pages/${name}.svelte`];
 
 		if (!page) {
@@ -14,6 +14,6 @@ await createInertiaApp({
 		return page;
 	},
 	setup({ el, App, props }) {
-		mount(App, { target: el, props });
+		mount(App, { target: el as Element, props });
 	},
 });
